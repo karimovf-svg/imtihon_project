@@ -10,4 +10,5 @@ urlpatterns = [
     path('register/', RegisterUserApi.as_view()),
     path('token/', LoginApi.as_view(), name='token_obtain_pair'),
     path('teacher/create/', TeacherCreateApi.as_view(), name='teacher-create'),
+    path('student/create/', StudentCreateApi.as_view(), name='student-create'),
 ]

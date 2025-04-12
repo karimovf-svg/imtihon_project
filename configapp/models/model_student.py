@@ -10,7 +10,7 @@ class Student(BaseModel):
     descriptions = models.CharField(max_length=500, null=True, blank=True)
 
     def __str__(self):
-        return self.user.phone
+        return self.user.phone_number
 
 class Parents(BaseModel):
     student = models.OneToOneField(Student, on_delete=models.CASCADE)

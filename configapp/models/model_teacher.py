@@ -27,4 +27,4 @@ class Teacher(BaseModel):
     descriptions = models.CharField(max_length=500, null=True, blank=True)
 
     def __str__(self):
-        return self.user.phone
+        return self.user.phone_number
