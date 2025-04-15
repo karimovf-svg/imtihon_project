@@ -29,4 +29,4 @@ class StudentPostSerializer(serializers.Serializer):
 class ParentsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Parents
-        fields = ['id', 'full_name', 'phone_number', 'address', 'descriptions']
+        fields = ['id', 'student', 'full_name', 'phone_number', 'address', 'descriptions']

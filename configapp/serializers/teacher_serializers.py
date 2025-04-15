@@ -2,6 +2,16 @@ from rest_framework import serializers
 from . import UserSerializer
 from ..models import *
 
+class CourseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Course
+        fields = ['id', 'title', 'descriptions']
+
+class DepartmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Department
+        fields = ['id', 'title', 'is_active', 'search_fields', 'descriptions']
+
 class TeacherSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True)
     class Meta:

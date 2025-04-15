@@ -9,18 +9,18 @@ class UserSerializer(serializers.ModelSerializer):
             'id', 'phone_number', 'password', 'email', 'is_active', 'is_staff', 'is_admin', 'is_teacher', 'is_student')
 
 
-class ChangePasswordSerializer(serializers.Serializer):
-    old_password = serializers.CharField(required=True, write_only=True)
-    new_password = serializers.CharField(required=True, write_only=True)
-    re_new_password = serializers.CharField(required=True, write_only=True)
-
-    def update(self, instance, validated_data):
-
-        instance.password = validated_data.get('password', instance.password)
-        if not validated_data['old_password']:
-            raise serializers.ValidationError({'old_password': 'not found'})
-        if not validated_data['new_password']:
-            raise serializers.ValidationError({'new_password': 'not found'})
+# class ChangePasswordSerializer(serializers.Serializer):
+#     old_password = serializers.CharField(required=True, write_only=True)
+#     new_password = serializers.CharField(required=True, write_only=True)
+#     re_new_password = serializers.CharField(required=True, write_only=True)
+#
+#     def update(self, instance, validated_data):
+#
+#         instance.password = validated_data.get('password', instance.password)
+#         if not validated_data['old_password']:
+#             raise serializers.ValidationError({'old_password': 'not found'})
+#         if not validated_data['new_password']:
+#             raise serializers.ValidationError({'new_password': 'not found'})
 
 class VerifySMSSerializer(serializers.Serializer):
     phone_number = serializers.CharField()

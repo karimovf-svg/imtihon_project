@@ -7,6 +7,7 @@ class GroupSerializer(serializers.ModelSerializer):
         model = GroupStudent
         fields = ['id', 'title', 'course', 'teacher', 'table', 'start_date', 'end_date', 'descriptions']
 
+
 class TableSerializer(serializers.ModelSerializer):
     class Meta:
         model = Table

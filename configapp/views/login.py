@@ -3,7 +3,7 @@ from django.core.cache import cache
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView
 from django.shortcuts import render
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -93,7 +93,6 @@ class RegisterUserApi(APIView):
 
 # USER Update and Delete
 class UserDetailView(APIView):
-    # @swagger_auto_schema(operation_description="Delete a user by ID")
     def get_object(self, pk):
         return get_object_or_404(User, pk=pk)
 
@@ -111,14 +110,12 @@ class UserDetailView(APIView):
         user.delete()
         return Response({"detail": "Deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
-    # def delete(self, request, id):
-    #     user = get_object_or_404(User, id=id)
-    #     user.delete()
-    #     return Response({"detail": "User successfully deleted."}, status=status.HTTP_204_NO_CONTENT)
+
 
 # class ChangePasswordView(APIView):
 #     permission_classes = (permissions.IsAuthenticated)
 #
+#     @swagger_auto_schema(request_body=ChangePasswordSerializer)
 #     def patch(self, request, *args, **kwargs):
 #         serializer = ChangePasswordSerializer(instance=self.request.user, data=request.data)
 #         if serializer.is_valid(raise_exception=True):
