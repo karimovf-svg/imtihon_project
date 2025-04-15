@@ -3,10 +3,11 @@ from . import UserSerializer
 from ..models import *
 
 class TeacherSerializer(serializers.ModelSerializer):
-    # user = UserSerializer(read_only=True)
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
     class Meta:
         model = Teacher
         fields = ['id', 'user', 'department', 'course', 'descriptions']
+
 
 class TeacherUserSerializer(serializers.ModelSerializer):
     is_active = serializers.BooleanField(read_only=True)

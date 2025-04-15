@@ -3,9 +3,11 @@ from . import UserSerializer
 from ..models import *
 
 class StudentSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
     class Meta:
         model = Student
         fields = ['id', 'user', 'group', 'is_line', 'descriptions']
+
 
 class StudentUserSerializer(serializers.ModelSerializer):
     is_active = serializers.BooleanField(read_only=True)
@@ -18,6 +20,13 @@ class StudentUserSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'phone_number', 'password', 'email', 'is_active', 'is_staff', 'is_admin', 'is_teacher', 'is_student')
 
+
 class StudentPostSerializer(serializers.Serializer):
     user = StudentUserSerializer()
     student = StudentSerializer()
+
+
+class ParentsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Parents
+        fields = ['id', 'full_name', 'phone_number', 'address', 'descriptions']

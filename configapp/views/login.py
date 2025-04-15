@@ -7,6 +7,7 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.shortcuts import get_object_or_404
 from ..make_token import *
 from ..serializers import *
 import random
@@ -89,6 +90,31 @@ class RegisterUserApi(APIView):
         users = User.objects.all().order_by('-id')
         serializer = UserSerializer(users, many=True)
         return Response(data=serializer.data)
+
+# USER Update and Delete
+class UserDetailView(APIView):
+    # @swagger_auto_schema(operation_description="Delete a user by ID")
+    def get_object(self, pk):
+        return get_object_or_404(User, pk=pk)
+
+    @swagger_auto_schema(request_body=UserSerializer)
+    def put(self, request, pk):
+        user = self.get_object(pk)
+        serializer = UserSerializer(user, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        user = self.get_object(pk)
+        user.delete()
+        return Response({"detail": "Deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+
+    # def delete(self, request, id):
+    #     user = get_object_or_404(User, id=id)
+    #     user.delete()
+    #     return Response({"detail": "User successfully deleted."}, status=status.HTTP_204_NO_CONTENT)
 
 # class ChangePasswordView(APIView):
 #     permission_classes = (permissions.IsAuthenticated)

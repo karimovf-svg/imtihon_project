@@ -42,9 +42,9 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     phone_number = models.CharField(validators=[phone_regex],max_length=13, unique=True)
     is_admin = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
-    is_student = models.BooleanField(default=True)
-    is_teacher = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
+    is_student = models.BooleanField(default=False)
+    is_teacher = models.BooleanField(default=False)
 
     objects = CustomUserManager()
 
