@@ -2,6 +2,11 @@ from rest_framework import serializers
 from . import UserSerializer
 from ..models import *
 
+class GroupTeacherUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GroupStudent
+        fields = ['id', 'title']
+
 class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course

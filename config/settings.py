@@ -35,7 +35,22 @@ INSTALLED_APPS = [
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ),
+
+    'DEFAULT_PAGINATION-CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 2,
+}
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS':{
+        'Bearer':{
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header',
+            'description': 'JWT Tokenni quyidagicha kiriting: Bearer <your_token>',
+        }
+    },
+    'USE_SESSION_AUTH': False,
 }
 
 SIMPLE_JWT = {

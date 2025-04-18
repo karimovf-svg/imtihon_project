@@ -17,6 +17,7 @@ urlpatterns = [
     path('users/department/create/', DepartmentCreateView.as_view(), name='department_create'),
     path('users/department/<int:pk>/', DepartmentDetailView.as_view(), name='department_detail'),
     path('users/teacher/create/', TeacherCreateApi.as_view(), name='teacher_create'),
+    path('users/teacher/group-update-title/<int:pk>/', TeacherViewPermission.as_view(), name='teacher_permission'),
     path('users/teacher/<int:pk>/', TeacherUpdateView.as_view(), name='teacher_update'),
     path('users/student/create/', StudentCreateApi.as_view(), name='student_create'),
     path('users/student/<int:pk>/', StudentUpdateView.as_view(), name='student_update'),
@@ -25,7 +26,7 @@ urlpatterns = [
 
     # Course
     path('course/create/', CourseCreateView.as_view(), name='course_create'),
-    path('course/course-detail/<int:pk>/', CourseDetailView.as_view(), name='course_detail'),
+    path('course/detail/<int:pk>/', CourseDetailView.as_view(), name='course_detail'),
     path('course/group-students/create/', GroupStudentCreateView.as_view(), name='group_create'),
     path('course/group-students/<int:pk>/', GroupStudentDetailView.as_view(), name='group_detail'),
     path('course/table/create/', TableCreateView.as_view(), name='table_create'),
@@ -34,6 +35,4 @@ urlpatterns = [
     path('course/table-type/<int:pk>/', TableTypeDetailView.as_view(), name='table_type_detail'),
     path('course/rooms/create/', RoomsCreateView.as_view(), name='rooms_create'),
     path('course/rooms/<int:pk>/', RoomsDetailView.as_view(), name='rooms_detail'),
-    path('course/day/create/', DayCreateView.as_view(), name='day_create'),
-    path('course/day/<int:pk>/', DayDetailView.as_view(), name='day_detail'),
 ]

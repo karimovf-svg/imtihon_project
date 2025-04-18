@@ -5,14 +5,19 @@ from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from ..serializers import *
+from ..add_pagination import *
+from ..add_permission import *
 
 class StudentCreateApi(APIView):
     def get(self, request):
         data = {'success': True}
         student = Student.objects.all()
-        serializer = StudentSerializer(student, many=True)
+        paginator = CustomPagination()
+        paginator.page_size = 2 # Sahifadagi obyektlar soni
+        result_page = paginator.paginate_queryset(student, request)
+        serializer = StudentSerializer(result_page, many=True)
         data['student'] = serializer.data
-        return Response(data=data)
+        return paginator.get_paginated_response(data=data)
 
     @swagger_auto_schema(request_body=StudentPostSerializer)
     def post(self, request):
@@ -48,7 +53,9 @@ class StudentUpdateView(APIView):
     def put(self, request, pk):
         student = self.get_object(pk)
         serializer = StudentSerializer(student, data=request.data, partial=True)
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
+            password = serializer.validated_data.get('password')
+            serializer.validated_data['password'] = make_password(password)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -63,7 +70,9 @@ class ParentsCreateView(APIView):
     @swagger_auto_schema(request_body=ParentsSerializer)
     def post(self, request):
         serializer = ParentsSerializer(data=request.data)
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
+            password = serializer.validated_data.get('password')
+            serializer.validated_data['password'] = make_password(password)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -76,7 +85,9 @@ class ParentsUpdateView(APIView):
     def put(self, request, pk):
         parent = self.get_object(pk)
         serializer = ParentsSerializer(parent, data=request.data)
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
+            password = serializer.validated_data.get('password')
+            serializer.validated_data['password'] = make_password(password)
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

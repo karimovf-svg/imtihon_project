@@ -1,3 +1,4 @@
+from django.contrib.admin.templatetags.admin_list import pagination
 from django.contrib.auth.hashers import make_password
 from django.core.cache import cache
 from drf_yasg.utils import swagger_auto_schema
@@ -10,6 +11,7 @@ from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from ..make_token import *
 from ..serializers import *
+from ..add_pagination import *
 import random
 
 class LoginApi(APIView):
@@ -88,8 +90,11 @@ class RegisterUserApi(APIView):
 
     def get(self, request):
         users = User.objects.all().order_by('-id')
+        paginator = CustomPagination()
+        # Sahifadagi obyektlar soni
+        result_page = paginator.paginate_queryset(users, request)
         serializer = UserSerializer(users, many=True)
-        return Response(data=serializer.data)
+        return paginator.get_paginated_response(data=serializer.data)
 
 # USER Update and Delete
 class UserDetailView(APIView):
@@ -100,7 +105,9 @@ class UserDetailView(APIView):
     def put(self, request, pk):
         user = self.get_object(pk)
         serializer = UserSerializer(user, data=request.data)
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
+            password = serializer.validated_data.get('password')
+            serializer.validated_data['password'] = make_password(password)
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

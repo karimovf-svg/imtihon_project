@@ -9,12 +9,12 @@ from django.shortcuts import get_object_or_404
 class GroupStudentCreateView(APIView):
     def get(self, request):
         groups = GroupStudent.objects.all()
-        serializer = GroupSerializer(groups, many=True)
+        serializer = GroupStudentSerializer(groups, many=True)
         return Response(serializer.data)
 
-    @swagger_auto_schema(request_body=GroupSerializer)
+    @swagger_auto_schema(request_body=GroupStudentSerializer)
     def post(self, request):
-        serializer = GroupSerializer(data=request.data)
+        serializer = GroupStudentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -26,13 +26,13 @@ class GroupStudentDetailView(APIView):
 
     def get(self, request, pk):
         group = self.get_object(pk)
-        serializer = GroupSerializer(group)
+        serializer = GroupStudentSerializer(group)
         return Response(serializer.data)
 
-    @swagger_auto_schema(request_body=GroupSerializer)
+    @swagger_auto_schema(request_body=GroupStudentSerializer)
     def put(self, request, pk):
         group = self.get_object(pk)
-        serializer = GroupSerializer(group, data=request.data)
+        serializer = GroupStudentSerializer(group, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -154,42 +154,4 @@ class RoomsDetailView(APIView):
     def delete(self, request, pk):
         rooms = self.get_object(pk)
         rooms.delete()
-        return Response({"detail": "Deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
-
-
-class DayCreateView(APIView):
-    def get(self, request):
-        days = Day.objects.all()
-        serializer = DaySerializer(days, many=True)
-        return Response(serializer.data)
-
-    @swagger_auto_schema(request_body=DaySerializer)
-    def post(self, request):
-        serializer = DaySerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-class DayDetailView(APIView):
-    def get_object(self, pk):
-        return get_object_or_404(Day, pk=pk)
-
-    def get(self, request, pk):
-        days = self.get_object(pk)
-        serializer = DaySerializer(days)
-        return Response(serializer.data)
-
-    @swagger_auto_schema(request_body=DaySerializer)
-    def put(self, request, pk):
-        days = self.get_object(pk)
-        serializer = DaySerializer(days, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, pk):
-        days = self.get_object(pk)
-        days.delete()
         return Response({"detail": "Deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
