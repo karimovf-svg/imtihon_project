@@ -9,50 +9,9 @@ from ..serializers import *
 from ..add_pagination import *
 from ..add_permission import *
 
-class TeacherViewPermission(APIView):
+class TeacherCreateApi(APIView):
     permission_classes = [IsAuthenticated, TeacherPermission]
 
-    def get(self, request):
-        """
-        Teacher o‘z profilini ko‘rishi (GET)
-        """
-        teacher = get_object_or_404(Teacher, user=request.user)
-        serializer = TeacherSerializer(teacher)
-        return Response({
-            "status": True,
-            "teacher": serializer.data
-        }, status=status.HTTP_200_OK)
-
-    @swagger_auto_schema(request_body=GroupTeacherUpdateSerializer)
-    def patch(self, request, pk=None):
-        """
-        Teacher o‘ziga tegishli GroupStudent nomini yangilaydi
-        """
-        teacher = get_object_or_404(Teacher, user=request.user)
-        try:
-            group = GroupStudent.objects.get(pk=pk, teacher=teacher)
-        except GroupStudent.DoesNotExist:
-            return Response({
-                "status": False,
-                "message": "Bunday guruh sizga biriktirilmagan yoki mavjud emas"
-            }, status=status.HTTP_404_NOT_FOUND)
-
-        serializer = GroupTeacherUpdateSerializer(group, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({
-                "status": True,
-                "message": "Guruh nomi yangilandi",
-                "group": serializer.data
-            }, status=status.HTTP_200_OK)
-
-        return Response({
-            "status": False,
-            "errors": serializer.errors
-        }, status=status.HTTP_400_BAD_REQUEST)
-
-
-class TeacherCreateApi(APIView):
     def get(self, request):
         data = {'success': True}
         teachers = Teacher.objects.all()
@@ -90,6 +49,7 @@ class TeacherCreateApi(APIView):
         return Response(data=user_serializer.errors)
 
 class TeacherUpdateView(APIView):
+    permission_classes = [IsAuthenticated, TeacherPermission]
     def get_object(self, pk):
         return get_object_or_404(Teacher, pk=pk)
 
@@ -104,6 +64,35 @@ class TeacherUpdateView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @swagger_auto_schema(request_body=GroupTeacherUpdateSerializer)
+    def patch(self, request, pk=None):
+        """
+        Teacher o‘ziga tegishli GroupStudent nomini yangilaydi
+        """
+        teacher = get_object_or_404(Teacher, user=request.user)
+        try:
+            group = GroupStudent.objects.get(pk=pk, teacher=teacher)
+        except GroupStudent.DoesNotExist:
+            return Response({
+                "status": False,
+                "message": "Bunday guruh sizga biriktirilmagan yoki mavjud emas"
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = GroupTeacherUpdateSerializer(group, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                "status": True,
+                "message": "Guruh nomi yangilandi",
+                "group": serializer.data
+            }, status=status.HTTP_200_OK)
+
+        return Response({
+            "status": False,
+            "errors": serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+
 class CourseCreateView(APIView):
     def get(self, request):
         course = Course.objects.all()
@@ -114,8 +103,6 @@ class CourseCreateView(APIView):
     def post(self, request):
         serializer = CourseSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            password = serializer.validated_data.get('password')
-            serializer.validated_data['password'] = make_password(password)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -134,8 +121,6 @@ class CourseDetailView(APIView):
         course = self.get_object(pk)
         serializer = CourseSerializer(course, data=request.data)
         if serializer.is_valid(raise_exception=True):
-            password = serializer.validated_data.get('password')
-            serializer.validated_data['password'] = make_password(password)
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -156,8 +141,6 @@ class DepartmentCreateView(APIView):
     def post(self, request):
         serializer = DepartmentSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            password = serializer.validated_data.get('password')
-            serializer.validated_data['password'] = make_password(password)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -176,8 +159,6 @@ class DepartmentDetailView(APIView):
         dep = self.get_object(pk)
         serializer = DepartmentSerializer(dep, data=request.data)
         if serializer.is_valid(raise_exception=True):
-            password = serializer.validated_data.get('password')
-            serializer.validated_data['password'] = make_password(password)
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

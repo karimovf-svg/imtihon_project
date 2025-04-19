@@ -15,7 +15,7 @@ from ..add_pagination import *
 import random
 
 class LoginApi(APIView):
-    permission_classes = [AllowAny, ]
+    permission_classes = [AllowAny,]
     @swagger_auto_schema(request_body=LoginSerializer)
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
