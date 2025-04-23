@@ -25,21 +25,24 @@ class TeacherCreateApi(APIView):
     @swagger_auto_schema(request_body=TeacherPostSerializer)
     def post(self, request):
         data = {'success': True}
-        user = request.data['user']
-        teacher = request.data['teacher']
-        phone_number = user['phone_number']
-        user_serializer = UserSerializer(data=user)
-        user['is_teacher'] = True
-        user['is_active'] = True
+        user_data = request.data.get('user')
+        teacher_data = request.data.get('teacher')
 
-        # User ni serialize qilish
+        if not user_data or not teacher_data:
+            return Response({
+                "success": False,
+                "message": "User yoki Teacher ma'lumotlari to‘liq emas"
+            }, status=400)
+
+        user_data['is_teacher'] = True
+        user_data['is_active'] = True
+
+        user_serializer = UserSerializer(data=user_data)
         if user_serializer.is_valid(raise_exception=True):
-            user_serializer.password = (make_password(user_serializer.validated_data.get('password')))
-            user = user_serializer.save()  # YANGI USER YARATILADI
-            # Userni ID sini olish
-            user_id = User.objects.filter(phone_number=phone_number).values('id')[0]['id']
-            teacher['user'] = user_id   # Teacher uchun user_id biriktiramiz
-            teacher_serializer = TeacherSerializer(data=teacher)
+            user = user_serializer.save()
+            teacher_data['user'] = user.id
+
+            teacher_serializer = TeacherSerializer(data=teacher_data)
             if teacher_serializer.is_valid(raise_exception=True):
                 teacher_serializer.save()
                 data['user'] = user_serializer.data

@@ -1,12 +1,27 @@
 from django.contrib.auth import authenticate
+from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 from ..models import *
 
 class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+
     class Meta:
         model = User
         fields = (
-            'id', 'phone_number', 'password', 'email', 'is_active', 'is_staff', 'is_admin', 'is_teacher', 'is_student')
+            'id', 'phone_number', 'password', 'email',
+            'is_active', 'is_staff', 'is_admin', 'is_teacher', 'is_student'
+        )
+
+    def create(self, validated_data):
+        validated_data['password'] = make_password(validated_data['password'])
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        password = validated_data.get('password')
+        if password:
+            validated_data['password'] = make_password(password)
+        return super().update(instance, validated_data)
 
 
 # class ChangePasswordSerializer(serializers.Serializer):

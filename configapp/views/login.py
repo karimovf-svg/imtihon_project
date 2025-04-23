@@ -50,7 +50,7 @@ class PhoneSendOTP(APIView):
 
 
 def send_otp():
-    otp = str(random.randint(1001, 999900))
+    otp = str(random.randint(1001, 9999))
     return otp
 
 

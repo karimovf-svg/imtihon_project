@@ -3,7 +3,6 @@ from . import UserSerializer
 from ..models import *
 
 class StudentSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(read_only=True)
     class Meta:
         model = Student
         fields = ['id', 'user', 'group', 'is_line', 'descriptions']
@@ -23,7 +22,23 @@ class StudentUserSerializer(serializers.ModelSerializer):
 
 class StudentPostSerializer(serializers.Serializer):
     user = StudentUserSerializer()
-    student = StudentSerializer()
+    # student = StudentSerializer()
+    group = serializers.PrimaryKeyRelatedField(queryset=GroupStudent.objects.all(), many=True)
+
+    class Meta:
+        model = Student
+        fields = ["id", "user", "group", "is_line", "descriptions"]
+        read_only_fields = ["user"]
+
+    def create(self, validated_data):
+        user_db = validated_data.pop("user")
+        group_db = validated_data.pop("group")
+        user_db["is_active"] = True
+        user_db["is_student"] = True
+        user = User.objects.create_user(**user_db)
+        student = Student.objects.create(user=user, **validated_data)
+        student.group.set(group_db)
+        return student
 
 
 class ParentsSerializer(serializers.ModelSerializer):
