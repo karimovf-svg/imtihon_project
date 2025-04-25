@@ -5,7 +5,7 @@ from ..models import *
 class StudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
-        fields = ['id', 'user', 'group', 'is_line', 'descriptions']
+        fields = ['id', 'user', 'group', 'is_active', 'descriptions']
 
 
 class StudentUserSerializer(serializers.ModelSerializer):
@@ -22,12 +22,13 @@ class StudentUserSerializer(serializers.ModelSerializer):
 
 class StudentPostSerializer(serializers.Serializer):
     user = StudentUserSerializer()
-    # student = StudentSerializer()
     group = serializers.PrimaryKeyRelatedField(queryset=GroupStudent.objects.all(), many=True)
+    descriptions = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+    is_active = serializers.BooleanField(required=False)
 
     class Meta:
         model = Student
-        fields = ["id", "user", "group", "is_line", "descriptions"]
+        fields = ["id", "user", "group", "is_active", "descriptions"]
         read_only_fields = ["user"]
 
     def create(self, validated_data):

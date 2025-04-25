@@ -9,7 +9,7 @@ class TeacherPermission(BasePermission):
         if request.user.is_admin:
             return True
 
-        if request.user.is_teacher and request.method in ['GET', 'PATCH']:
+        if request.user.is_teacher and request.method in ['GET', 'POST']:
             return True
 
         return False

@@ -37,4 +37,20 @@ class TeacherUserSerializer(serializers.ModelSerializer):
 
 class TeacherPostSerializer(serializers.Serializer):
     user = TeacherUserSerializer()
-    teacher = TeacherSerializer()
+    course = serializers.PrimaryKeyRelatedField(queryset=Course.objects.all(), many=True)
+    descriptions = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+
+    class Meta:
+        model = Teacher
+        fields = ['id', 'user', 'department', 'course', 'descriptions']
+        read_only_fields = ["user"]
+
+    def create(self, validated_data):
+        user_db = validated_data.pop("user")
+        course_db = validated_data.pop("course")
+        user_db["is_active"] = True
+        user_db["is_teacher"] = True
+        user = User.objects.create_user(**user_db)
+        teacher = Teacher.objects.create(user=user, **validated_data)
+        teacher.course.set(course_db)
+        return teacher

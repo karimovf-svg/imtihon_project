@@ -119,14 +119,14 @@ class UserDetailView(APIView):
 
 
 
-# class ChangePasswordView(APIView):
-#     permission_classes = (permissions.IsAuthenticated)
-#
-#     @swagger_auto_schema(request_body=ChangePasswordSerializer)
-#     def patch(self, request, *args, **kwargs):
-#         serializer = ChangePasswordSerializer(instance=self.request.user, data=request.data)
-#         if serializer.is_valid(raise_exception=True):
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_200_OK)
-#         return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+class ChangePasswordView(APIView):
+    permission_classes = (permissions.IsAuthenticated)
+
+    @swagger_auto_schema(request_body=ChangePasswordSerializer)
+    def patch(self, request, *args, **kwargs):
+        serializer = ChangePasswordSerializer(instance=self.request.user, data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
 

@@ -3,3 +3,6 @@ from .teacher_serializers import *
 from .student_serializers import *
 from .group_serializers import *
 from .attendance_serilaizers import *
+from .statistic_serializers import *
+from .homework_serializers import *
+from .payment_serializers import *

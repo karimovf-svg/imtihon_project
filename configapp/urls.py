@@ -2,18 +2,25 @@ from django.urls import path, include
 from .views import *
 from rest_framework.routers import DefaultRouter
 
+# Homework
 router = DefaultRouter()
+router.register('create',HomeworkViewSet,basename='homework')
+router.register('submission',HomeworkSubmissionViewSet,basename='homework-submission')
+router.register('review',HomeworkReviewViewSet,basename='homework-review')
+
 
 urlpatterns = [
     # Auth
     path('auth/post_send_otp/', PhoneSendOTP.as_view()),
     path('auth/post_v_otp/', VerifySMS.as_view()),
     path('auth/login/', LoginApi.as_view(), name='token_obtain_pair'),
-    # path('auth/new-password/', ChangePasswordView.as_view(), name='password_update'),
+    path('auth/new-password/', ChangePasswordView.as_view(), name='password_update'),
 
     # Attendance
-    path('attendance/create/', AttendanceCreateApi.as_view(), name='attendance_create'),
-    path('attendance/detail/<int:pk>/', AttendanceDetailApi.as_view(), name='attendance_detail'),
+    path('attendance/status-create/', StatusCreateAPI.as_view(), name='status_create'),
+    path('attendance/status-detail/<int:pk>/', StatusDetailAPI.as_view(), name='status-detail'),
+    path('attendance/create/', AttendanceCreateAPI.as_view(), name='attendance_create'),
+    path('attendance/detail/<int:pk>/', AttendanceDetailAPI.as_view(), name='attendance_detail'),
 
     # Users
     path('users/create/', RegisterUserApi.as_view()),
@@ -38,4 +45,18 @@ urlpatterns = [
     path('course/table-type/detail/<int:pk>/', TableTypeDetailView.as_view(), name='table_type_detail'),
     path('course/rooms/create/', RoomsCreateView.as_view(), name='rooms_create'),
     path('course/rooms/detail/<int:pk>/', RoomsDetailView.as_view(), name='rooms_detail'),
+    path('homeworks/', include(router.urls)),
+
+    path('statistic/students/', StudentFilterView.as_view(), name='statistic_students'),
+    path('statistic/teachers/', TeacherFilterView.as_view(), name='teachers_statistic'),
+    path('statistic/attendance/', AttendanceFilterView.as_view(), name='attendance_statistics'),
+    path('statistic/payments/', PaymentFilterView.as_view(), name='payments_statistics'),
+
+    # Payments
+    path('payments/months/create/', MonthCreateView.as_view(), name='month_create'),
+    path('payments/months/<int:pk>/', MonthDetailView.as_view(), name='month_detail'),
+    path('payments/payment-type/create/', PaymentTypeCreateView.as_view(), name='payment_type_create'),
+    path('payments/payment-type/<int:pk>/', PaymentTypeDetailView.as_view(), name='payment_type_detail'),
+    path('payments/payment-create/', PaymentCreateView.as_view(), name='payment_create'),
+    path('payments/payment/<int:pk>/', PaymentDetailView.as_view(), name='payment_detail'),
 ]

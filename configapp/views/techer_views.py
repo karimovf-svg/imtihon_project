@@ -1,6 +1,6 @@
 from django.contrib.auth.hashers import make_password
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
@@ -10,13 +10,13 @@ from ..add_pagination import *
 from ..add_permission import *
 
 class TeacherCreateApi(APIView):
-    permission_classes = [IsAuthenticated, TeacherPermission]
+    # permission_classes = [IsAdminUser]
 
     def get(self, request):
         data = {'success': True}
         teachers = Teacher.objects.all()
         paginator = CustomPagination()
-        paginator.page_size = 2 # Sahifadagi obyektlar soni
+        paginator.page_size = 10 # Sahifadagi obyektlar soni
         result_page = paginator.paginate_queryset(teachers, request)
         serializer = TeacherSerializer(result_page, many=True)
         data['teacher'] = serializer.data
@@ -24,35 +24,15 @@ class TeacherCreateApi(APIView):
 
     @swagger_auto_schema(request_body=TeacherPostSerializer)
     def post(self, request):
-        data = {'success': True}
-        user_data = request.data.get('user')
-        teacher_data = request.data.get('teacher')
-
-        if not user_data or not teacher_data:
-            return Response({
-                "success": False,
-                "message": "User yoki Teacher ma'lumotlari to‘liq emas"
-            }, status=400)
-
-        user_data['is_teacher'] = True
-        user_data['is_active'] = True
-
-        user_serializer = UserSerializer(data=user_data)
-        if user_serializer.is_valid(raise_exception=True):
-            user = user_serializer.save()
-            teacher_data['user'] = user.id
-
-            teacher_serializer = TeacherSerializer(data=teacher_data)
-            if teacher_serializer.is_valid(raise_exception=True):
-                teacher_serializer.save()
-                data['user'] = user_serializer.data
-                data['teacher'] = teacher_serializer.data
-                return Response(data=data)
-            return Response(data=teacher_serializer.errors)
-        return Response(data=user_serializer.errors)
+        serializer = TeacherPostSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data=serializer.data)
+        return Response(data=serializer.errors)
 
 class TeacherUpdateView(APIView):
-    permission_classes = [IsAuthenticated, TeacherPermission]
+    # permission_classes = [IsAdminUser, TeacherPermission]
+
     def get_object(self, pk):
         return get_object_or_404(Teacher, pk=pk)
 
@@ -97,6 +77,8 @@ class TeacherUpdateView(APIView):
 
 
 class CourseCreateView(APIView):
+    # permission_classes = [IsAdminUser]
+
     def get(self, request):
         course = Course.objects.all()
         serializer = CourseSerializer(course, many=True)
@@ -111,6 +93,8 @@ class CourseCreateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class CourseDetailView(APIView):
+    # permission_classes = [IsAdminUser]
+
     def get_object(self, pk):
         return get_object_or_404(Course, pk=pk)
 
@@ -135,6 +119,8 @@ class CourseDetailView(APIView):
 
 
 class DepartmentCreateView(APIView):
+    # permission_classes = [IsAdminUser]
+
     def get(self, request):
         dep = Department.objects.all()
         serializer = DepartmentSerializer(dep, many=True)
@@ -149,6 +135,8 @@ class DepartmentCreateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class DepartmentDetailView(APIView):
+    # permission_classes = [IsAdminUser]
+
     def get_object(self, pk):
         return get_object_or_404(Department, pk=pk)
 

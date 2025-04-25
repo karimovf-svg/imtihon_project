@@ -1,3 +1,4 @@
+from rest_framework.permissions import IsAdminUser
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
@@ -7,6 +8,8 @@ from ..serializers import *
 from django.shortcuts import get_object_or_404
 
 class GroupStudentCreateView(APIView):
+    # permission_classes = [IsAdminUser]
+
     def get(self, request):
         groups = GroupStudent.objects.all()
         serializer = GroupStudentSerializer(groups, many=True)
@@ -21,6 +24,8 @@ class GroupStudentCreateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class GroupStudentDetailView(APIView):
+    # permission_classes = [IsAdminUser]
+
     def get_object(self, pk):
         return get_object_or_404(GroupStudent, pk=pk)
 
@@ -38,6 +43,22 @@ class GroupStudentDetailView(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @swagger_auto_schema(request_body=GroupStudentUpdateSerializer)
+    def patch(self, request, pk):
+        group = self.get_object(pk)
+        is_active_value = request.data.get('is_active')
+
+        if is_active_value is None:
+            return Response(
+                {"is_active": ["This field is required."]},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        group.is_active = is_active_value
+        group.save()
+        serializer = GroupStudentSerializer(group)
+        return Response(serializer.data)
+
     def delete(self, request, pk):
         group = self.get_object(pk)
         group.delete()
@@ -45,6 +66,8 @@ class GroupStudentDetailView(APIView):
 
 
 class TableCreateView(APIView):
+    # permission_classes = [IsAdminUser]
+
     def get(self, request):
         table = Table.objects.all()
         serializer = TableSerializer(table, many=True)
@@ -59,6 +82,8 @@ class TableCreateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class TableDetailView(APIView):
+    # permission_classes = [IsAdminUser]
+
     def get_object(self, pk):
         return get_object_or_404(Table, pk=pk)
 
@@ -83,6 +108,8 @@ class TableDetailView(APIView):
 
 
 class TableTypeCreateView(APIView):
+    # permission_classes = [IsAdminUser]
+
     def get(self, request):
         table_type = TableType.objects.all()
         serializer = TableTypeSerializer(table_type, many=True)
@@ -97,6 +124,8 @@ class TableTypeCreateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class TableTypeDetailView(APIView):
+    # permission_classes = [IsAdminUser]
+
     def get_object(self, pk):
         return get_object_or_404(TableType, pk=pk)
 
@@ -120,6 +149,8 @@ class TableTypeDetailView(APIView):
         return Response({"detail": "Deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
 class RoomsCreateView(APIView):
+    # permission_classes = [IsAdminUser]
+
     def get(self, request):
         rooms = Rooms.objects.all()
         serializer = RoomsSerializer(rooms, many=True)
@@ -134,6 +165,8 @@ class RoomsCreateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class RoomsDetailView(APIView):
+    # permission_classes = [IsAdminUser]
+
     def get_object(self, pk):
         return get_object_or_404(Rooms, pk=pk)
 

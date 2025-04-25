@@ -5,7 +5,12 @@ from ..models import *
 class GroupStudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = GroupStudent
-        fields = ['id', 'title', 'course', 'teacher', 'table', 'start_date', 'end_date', 'descriptions']
+        fields = ['id', 'title', 'course', 'teacher', 'table', 'is_active', 'start_date', 'end_date', 'descriptions']
+
+class GroupStudentUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GroupStudent
+        fields = ['id', 'is_active']
 
 
 class TableSerializer(serializers.ModelSerializer):

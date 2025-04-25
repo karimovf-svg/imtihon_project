@@ -14,7 +14,7 @@ class Department(BaseModel):
     title = models.CharField(max_length=50)
     is_active = models.BooleanField(default=True)
     descriptions = models.CharField(max_length=500, null=True, blank=True)
-    search_fields = ['user__phone', 'user__full_name']
+    search_fields = ['user__phone_number']
 
     def __str__(self):
         return self.title
