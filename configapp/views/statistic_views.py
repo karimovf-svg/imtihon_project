@@ -92,14 +92,25 @@ class AttendanceFilterView(APIView):
         start_date = make_aware(datetime.combine(start_date, datetime.min.time()))
         end_date = make_aware(datetime.combine(end_date, datetime.max.time()))
 
-        # Davomat statistikasi
+        # Status IDlarini olish
+        try:
+            came_status = Status.objects.get(title__iexact='keldi')
+            absent_status = Status.objects.get(title__iexact='kelmadi')
+            late_status = Status.objects.get(title__iexact='kechikdi')
+            excused_status = Status.objects.get(title__iexact='sababli')
+        except Status.DoesNotExist as e:
+            return Response(
+                {"error": f"Status topilmadi: {str(e)}"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         attendance_stats = (
-            Attendance.objects.filter(created_ed__range=[start_date, end_date])
+            Attendance.objects.filter(created_ed__range=[start_date.date(), end_date.date()])
             .aggregate(
-                total_present=Count("id", filter=Q(is_status=1)),  # Kelganlar
-                total_absent=Count("id", filter=Q(is_status=2)),  # Kelmaganlar
-                total_late=Count("id", filter=Q(is_status=3)),  # Kechikkanlar
-                total_excused=Count("id", filter=Q(is_status=4)),  # Sababli kelmaganlar
+                total_present=Count("id", filter=Q(is_status=came_status)),
+                total_absent=Count("id", filter=Q(is_status=absent_status)),
+                total_late=Count("id", filter=Q(is_status=late_status)),
+                total_excused=Count("id", filter=Q(is_status=excused_status)),
             )
         )
         return Response(attendance_stats, status=status.HTTP_200_OK)

@@ -30,10 +30,6 @@ class MonthCreateView(APIView):
 class MonthDetailView(APIView):
     # permission_classes = [IsAuthenticated]
 
-    def get(self, request, pk):
-        month = get_object_or_404(Month, pk=pk)
-        serializer = MonthSerializer(month)
-        return Response(serializer.data)
 
     @swagger_auto_schema(request_body=MonthSerializer)
     def put(self, request, pk):
@@ -69,11 +65,6 @@ class PaymentTypeCreateView(APIView):
 
 class PaymentTypeDetailView(APIView):
     # permission_classes = [IsAdminUser]
-
-    def get(self, request, pk):
-        type = get_object_or_404(PaymentType, pk=pk)
-        serializer = PaymentTypeSerializer(type)
-        return Response(serializer.data)
 
     @swagger_auto_schema(request_body=PaymentTypeSerializer)
     def put(self, request, pk):

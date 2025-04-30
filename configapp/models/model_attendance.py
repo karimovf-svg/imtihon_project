@@ -15,6 +15,7 @@ class Status(BaseModel):
 class Attendance(BaseModel):
     group = models.ForeignKey(GroupStudent, on_delete=models.CASCADE, related_name='group_attendance')
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='student_attendance')
+    lesson = models.ForeignKey('configapp.Lesson', on_delete=models.CASCADE, related_name='lesson_attendances')
     is_status = models.ForeignKey('Status', on_delete=models.CASCADE, related_name='is_status')
 
     def __str__(self):

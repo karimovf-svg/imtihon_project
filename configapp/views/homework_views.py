@@ -59,10 +59,10 @@ class HomeworkReviewViewSet(viewsets.ViewSet):
         serializer = HomeworkReviewSerializer(homework, many=True)
         return Response(serializer.data)
 
-    def retrieve(self, request, pk=None):
-        homework = get_object_or_404(HomeworkReview, pk=pk)
-        serializer = HomeworkReviewSerializer(homework)
-        return Response(serializer.data)
+    # def retrieve(self, request, pk=None):
+    #     homework = get_object_or_404(HomeworkReview, pk=pk)
+    #     serializer = HomeworkReviewSerializer(homework)
+    #     return Response(serializer.data)
 
     @action(detail=False, methods=['post'], url_path='create/review')
     @swagger_auto_schema(request_body=HomeworkReviewSerializer)
@@ -100,10 +100,10 @@ class HomeworkSubmissionViewSet(viewsets.ViewSet):
         serializer = HomeworkSubmissionSerializer(homework, many=True)
         return Response(serializer.data)
 
-    def retrieve(self, request, pk=None):
-        homework = get_object_or_404(HomeworkSubmission, pk=pk)
-        serializer = HomeworkSubmissionSerializer(homework)
-        return Response(serializer.data)
+    # def retrieve(self, request, pk=None):
+    #     homework = get_object_or_404(HomeworkSubmission, pk=pk)
+    #     serializer = HomeworkSubmissionSerializer(homework)
+    #     return Response(serializer.data)
 
     @action(detail=False, methods=['post'], url_path='create/submission')
     @swagger_auto_schema(request_body=HomeworkSubmissionSerializer)

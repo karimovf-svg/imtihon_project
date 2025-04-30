@@ -1,4 +1,4 @@
-from ..models import *
+from ..models import BaseModel, Student, GroupStudent
 from django.db import models
 
 

@@ -5,7 +5,7 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView
 from django.shortcuts import render
 from rest_framework import status, permissions
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
@@ -95,6 +95,18 @@ class RegisterUserApi(APIView):
         result_page = paginator.paginate_queryset(users, request)
         serializer = UserSerializer(users, many=True)
         return paginator.get_paginated_response(data=serializer.data)
+
+# Create User Admin
+class CreateAdminUserView(APIView):
+    # permission_classes = [IsAdminUser]
+
+    @swagger_auto_schema(request_body=AdminUserSerializer)
+    def post(self, request):
+        serializer = AdminUserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Admin successfully created"}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # USER Update and Delete
 class UserDetailView(APIView):

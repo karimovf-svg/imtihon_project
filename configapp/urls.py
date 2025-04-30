@@ -23,8 +23,9 @@ urlpatterns = [
     path('attendance/detail/<int:pk>/', AttendanceDetailAPI.as_view(), name='attendance_detail'),
 
     # Users
-    path('users/create/', RegisterUserApi.as_view()),
+    path('users/create/', RegisterUserApi.as_view(), name='users_create'),
     path('users/detail/<int:pk>/', UserDetailView.as_view(), name='users_detail'),
+    path('users/admin-create/', CreateAdminUserView.as_view(), name='admin_create'),
     path('users/department/create/', DepartmentCreateView.as_view(), name='department_create'),
     path('users/department/<int:pk>/', DepartmentDetailView.as_view(), name='department_detail'),
     path('users/teacher/create/', TeacherCreateApi.as_view(), name='teacher_create'),
@@ -55,8 +56,8 @@ urlpatterns = [
     # Payments
     path('payments/months/create/', MonthCreateView.as_view(), name='month_create'),
     path('payments/months/<int:pk>/', MonthDetailView.as_view(), name='month_detail'),
-    path('payments/payment-type/create/', PaymentTypeCreateView.as_view(), name='payment_type_create'),
-    path('payments/payment-type/<int:pk>/', PaymentTypeDetailView.as_view(), name='payment_type_detail'),
+    path('payments/type/create/', PaymentTypeCreateView.as_view(), name='payment_type_create'),
+    path('payments/type/<int:pk>/', PaymentTypeDetailView.as_view(), name='payment_type_detail'),
     path('payments/payment-create/', PaymentCreateView.as_view(), name='payment_create'),
     path('payments/payment/<int:pk>/', PaymentDetailView.as_view(), name='payment_detail'),
 ]

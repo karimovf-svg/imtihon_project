@@ -24,6 +24,29 @@ class UserSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
 
+class AdminUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['phone_number', 'password']
+        extra_kwargs = {
+            'password': {
+                'write_only': True,
+                'style': {'input_type': 'password'}  # Swaggerda password input ko'rinishi
+            }
+        }
+    def create(self, validated_data):
+        validated_data['password'] = make_password(validated_data['password'])
+
+        validated_data.update({
+            'is_active': True,
+            'is_admin': True,
+            'is_staff': True,
+        })
+        # User yaratish
+        user = User.objects.create(**validated_data)
+        return user
+
+
 class ChangePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(required=True, write_only=True)
     new_password = serializers.CharField(required=True, write_only=True)
