@@ -25,6 +25,7 @@ class LoginApi(APIView):
         user = serializer.validated_data.get('user')
         token = get_tokens_for_user(user)
         token['is_admin'] = user.is_admin
+        token['is_staff'] = user.is_staff
         return Response(data=token, status=status.HTTP_200_OK)
 
 
