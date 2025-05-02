@@ -8,10 +8,11 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from ..models import *
 from ..serializers import *
+from ..add_permission import *
 
-
+# Students Statistics
 class StudentFilterView(APIView):
-    # permission_classes = [IsAdminUser]
+    permission_classes = [StaffPermission]
 
     @swagger_auto_schema(request_body=DateFilterSerializer)
     def post(self, request):
@@ -42,8 +43,9 @@ class StudentFilterView(APIView):
         }, status=status.HTTP_200_OK)
 
 
+# Teachers Statistics
 class TeacherFilterView(APIView):
-    # permission_classes = [IsAdminUser]
+    permission_classes = [StaffPermission]
 
     @swagger_auto_schema(request_body=DateFilterSerializer)
     def post(self, request):
@@ -76,9 +78,9 @@ class TeacherFilterView(APIView):
         }, status=status.HTTP_200_OK)
 
 
-
+# Davomat Statistics
 class AttendanceFilterView(APIView):
-    # permission_classes = [IsAdminUser]
+    permission_classes = [StaffPermission]
 
     @swagger_auto_schema(request_body=DateFilterSerializer)
     def post(self, request):
@@ -116,8 +118,9 @@ class AttendanceFilterView(APIView):
         return Response(attendance_stats, status=status.HTTP_200_OK)
 
 
+# Payments Statistics
 class PaymentFilterView(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [StaffPermission]
 
     @swagger_auto_schema(request_body=DateFilterSerializer)
     def post(self, request):

@@ -5,13 +5,14 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView
 from django.shortcuts import render
 from rest_framework import status, permissions
-from rest_framework.permissions import AllowAny, IsAdminUser
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from ..make_token import *
 from ..serializers import *
 from ..add_pagination import *
+from ..add_permission import *
 import random
 
 class LoginApi(APIView):
@@ -98,7 +99,7 @@ class RegisterUserApi(APIView):
 
 # Create User Admin
 class CreateAdminUserView(APIView):
-    # permission_classes = [IsAdminUser]
+    permission_classes = [AdminPermission]
 
     @swagger_auto_schema(request_body=AdminUserSerializer)
     def post(self, request):
@@ -110,6 +111,7 @@ class CreateAdminUserView(APIView):
 
 # USER Update and Delete
 class UserDetailView(APIView):
+    permission_classes = [AdminPermission]
     def get_object(self, pk):
         return get_object_or_404(User, pk=pk)
 
@@ -132,7 +134,7 @@ class UserDetailView(APIView):
 
 
 class ChangePasswordView(APIView):
-    permission_classes = (permissions.IsAuthenticated)
+    permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(request_body=ChangePasswordSerializer)
     def patch(self, request, *args, **kwargs):

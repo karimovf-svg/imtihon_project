@@ -9,8 +9,9 @@ from ..serializers import *
 from ..add_pagination import *
 from ..add_permission import *
 
+# Teacher
 class TeacherCreateApi(APIView):
-    # permission_classes = [IsAdminUser]
+    permission_classes = [StaffPermission]
 
     def get(self, request):
         data = {'success': True}
@@ -31,7 +32,7 @@ class TeacherCreateApi(APIView):
         return Response(data=serializer.errors)
 
 class TeacherUpdateView(APIView):
-    # permission_classes = [IsAdminUser, TeacherPermission]
+    permission_classes = [StaffPermission]
 
     def get_object(self, pk):
         return get_object_or_404(Teacher, pk=pk)
@@ -47,11 +48,13 @@ class TeacherUpdateView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+# Teacher o‘ziga tegishli GroupStudent nomini yangilaydi
+class TeacherUpdateGrouptitle(APIView):
+    permission_classes = [TeacherUpdatePermission]
+
     @swagger_auto_schema(request_body=GroupTeacherUpdateSerializer)
     def patch(self, request, pk=None):
-        """
-        Teacher o‘ziga tegishli GroupStudent nomini yangilaydi
-        """
         teacher = get_object_or_404(Teacher, user=request.user)
         try:
             group = GroupStudent.objects.get(pk=pk, teacher=teacher)
@@ -76,8 +79,9 @@ class TeacherUpdateView(APIView):
         }, status=status.HTTP_400_BAD_REQUEST)
 
 
+# Course
 class CourseCreateView(APIView):
-    # permission_classes = [IsAdminUser]
+    permission_classes = [StaffPermission]
 
     def get(self, request):
         course = Course.objects.all()
@@ -92,8 +96,9 @@ class CourseCreateView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class CourseDetailView(APIView):
-    # permission_classes = [IsAdminUser]
+    permission_classes = [StaffPermission]
 
     def get_object(self, pk):
         return get_object_or_404(Course, pk=pk)
@@ -118,8 +123,9 @@ class CourseDetailView(APIView):
         return Response({"detail": "Deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
 
+# Department
 class DepartmentCreateView(APIView):
-    # permission_classes = [IsAdminUser]
+    permission_classes = [StaffPermission]
 
     def get(self, request):
         dep = Department.objects.all()
@@ -134,8 +140,9 @@ class DepartmentCreateView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class DepartmentDetailView(APIView):
-    # permission_classes = [IsAdminUser]
+    permission_classes = [StaffPermission]
 
     def get_object(self, pk):
         return get_object_or_404(Department, pk=pk)

@@ -12,13 +12,13 @@ from drf_yasg import openapi
 
 # Status
 class StatusCreateAPI(APIView):
-    # permission_classes = [IsAdminUser]
+    permission_classes = [StaffPermission]
 
     def get(self, request):
         status = Status.objects.all()
         paginator = CustomPagination()
         result_page = paginator.paginate_queryset(status, request)
-        serializer = StatusSerializer(status, many=True)
+        serializer = StatusSerializer(result_page, many=True)
         return paginator.get_paginated_response(serializer.data)
 
     @swagger_auto_schema(request_body=StatusSerializer)
@@ -31,7 +31,7 @@ class StatusCreateAPI(APIView):
 
 
 class StatusDetailAPI(APIView):
-    # permission_classes = [IsAdminUser]
+    permission_classes = [StaffPermission]
 
     def get_object(self, pk):
         return get_object_or_404(Status, pk=pk)
@@ -53,6 +53,8 @@ class StatusDetailAPI(APIView):
 
 # Attendance
 class AttendanceCreateAPI(APIView):
+    permission_classes = [TeacherPermission]
+
     def get(self, request):
         attendances = Attendance.objects.all()
         paginator = CustomPagination()
@@ -146,7 +148,7 @@ class AttendanceCreateAPI(APIView):
 
 
 class AttendanceDetailAPI(APIView):
-    # permission_classes = [TeacherPermission]
+    permission_classes = [TeacherPermission]
 
     def get_object(self, pk):
         return get_object_or_404(Attendance, pk=pk)
@@ -169,6 +171,8 @@ class AttendanceDetailAPI(APIView):
 
 # Student o'z davomatini ko'rish
 class StudentAttendanceAPIView(APIView):
+    permission_classes = [StudentPermission]
+
     def get(self, request, student_id):
         student = get_object_or_404(Student, id=student_id)
         attendances = Attendance.objects.filter(student=student)

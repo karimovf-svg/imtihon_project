@@ -9,8 +9,9 @@ from ..serializers import *
 from ..add_pagination import *
 from ..add_permission import *
 
+# Student
 class StudentCreateApi(APIView):
-    # permission_classes = [IsAdminUser]
+    permission_classes = [StaffPermission]
 
     def get(self, request):
         data = {'success': True}
@@ -30,8 +31,9 @@ class StudentCreateApi(APIView):
             return Response(data=serializer.data)
         return Response(data=serializer.errors)
 
+
 class StudentUpdateView(APIView):
-    # permission_classes = [IsAdminUser]
+    permission_classes = [StaffPermission]
 
     def get_object(self, pk):
         return get_object_or_404(Student, pk=pk)
@@ -48,8 +50,9 @@ class StudentUpdateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# Parents
 class ParentsCreateView(APIView):
-    # permission_classes = [IsAdminUser]
+    permission_classes = [StaffPermission]
 
     def get(self, request):
         parent = Parents.objects.all()
@@ -64,8 +67,9 @@ class ParentsCreateView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class ParentsUpdateView(APIView):
-    # permission_classes = [IsAdminUser]
+    permission_classes = [StaffPermission]
 
     def get_object(self, pk):
         return get_object_or_404(Parents, pk=pk)

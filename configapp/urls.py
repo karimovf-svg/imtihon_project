@@ -17,10 +17,10 @@ urlpatterns = [
     path('auth/new-password/', ChangePasswordView.as_view(), name='password_update'),
 
     # Attendance
-    # path('attendance/status-create/', StatusCreateAPI.as_view(), name='status_create'),
-    # path('attendance/status-detail/<int:pk>/', StatusDetailAPI.as_view(), name='status-detail'),
-    # path('attendance/create/', AttendanceCreateAPI.as_view(), name='attendance_create'),
-    # path('attendance/detail/<int:pk>/', AttendanceDetailAPI.as_view(), name='attendance_detail'),
+    path('attendance/status-create/', StatusCreateAPI.as_view(), name='status_create'),
+    path('attendance/status-detail/<int:pk>/', StatusDetailAPI.as_view(), name='status-detail'),
+    path('attendance/create/', AttendanceCreateAPI.as_view(), name='attendance_create'),
+    path('attendance/detail/<int:pk>/', AttendanceDetailAPI.as_view(), name='attendance_detail'),
 
 
     # Users
@@ -48,6 +48,7 @@ urlpatterns = [
     path('course/rooms/create/', RoomsCreateView.as_view(), name='rooms_create'),
     path('course/rooms/detail/<int:pk>/', RoomsDetailView.as_view(), name='rooms_detail'),
     path('homeworks/', include(router.urls)),
+    # path('course/teacher-group-title/update/<int:pk>/', TeacherUpdateGrouptitle.as_view(), name='group_title_update'),
 
     # Statistics
     path('statistic/attendance-student/<int:student_id>/', StudentAttendanceAPIView.as_view(), name='student_get_attendances'),

@@ -12,7 +12,7 @@ from ..serializers import MonthSerializer, PaymentTypeSerializer, PaymentSeriali
 
 #Month
 class MonthCreateView(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [StaffPermission]
 
     def get(self, request):
         months = Month.objects.all()
@@ -28,8 +28,7 @@ class MonthCreateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class MonthDetailView(APIView):
-    # permission_classes = [IsAuthenticated]
-
+    permission_classes = [StaffPermission]
 
     @swagger_auto_schema(request_body=MonthSerializer)
     def put(self, request, pk):
@@ -48,7 +47,7 @@ class MonthDetailView(APIView):
 
 #PaymentType
 class PaymentTypeCreateView(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [StaffPermission]
 
     def get(self, request):
         types = PaymentType.objects.all()
@@ -63,8 +62,9 @@ class PaymentTypeCreateView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class PaymentTypeDetailView(APIView):
-    # permission_classes = [IsAdminUser]
+    permission_classes = [StaffPermission]
 
     @swagger_auto_schema(request_body=PaymentTypeSerializer)
     def put(self, request, pk):
@@ -83,7 +83,7 @@ class PaymentTypeDetailView(APIView):
 
 #Payment
 class PaymentCreateView(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [StaffPermission]
 
     def get(self, request):
         payments = Payment.objects.all()
@@ -98,8 +98,9 @@ class PaymentCreateView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class PaymentDetailView(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [StaffPermission]
 
     def get(self, request, pk):
         payment = get_object_or_404(Payment, pk=pk)
@@ -120,8 +121,12 @@ class PaymentDetailView(APIView):
         payment.delete()
         return Response({'status': True, 'detail': 'Payment o‘chirildi'}, status=status.HTTP_204_NO_CONTENT)
 
+
+
 # Student o'z to'lo'vlarini ko'rish
 class StudentPaymentAPIView(APIView):
+    permission_classes = [StudentPermission]
+
     def get(self, request, student_id):
         student = get_object_or_404(Student, id=student_id)
         payment = Payment.objects.filter(student=student)

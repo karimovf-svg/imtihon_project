@@ -10,8 +10,9 @@ from ..add_permission import *
 from ..add_pagination import *
 from ..serializers import *
 
+# Homework
 class HomeworkViewSet(viewsets.ViewSet):
-    # permission_classes = [AdminOrTeacher]
+    permission_classes = [TeacherPermission]
 
     def list(self, request):
         homeworks = Homework.objects.all()
@@ -50,9 +51,9 @@ class HomeworkViewSet(viewsets.ViewSet):
         return Response({'status':True,'detail': 'Homework muaffaqiyatli uchirildi'}, status=status.HTTP_204_NO_CONTENT)
 
 
-
+# Homeworkni Baholash
 class HomeworkReviewViewSet(viewsets.ViewSet):
-    # permission_classes = [AdminOrTeacher]
+    permission_classes = [TeacherPermission]
 
     def list(self, request):
         homework = HomeworkReview.objects.all()
@@ -91,9 +92,9 @@ class HomeworkReviewViewSet(viewsets.ViewSet):
         return Response({'status':True,'detail': 'HomeworkReview muaffaqiyatli uchirildi'}, status=status.HTTP_204_NO_CONTENT)
 
 
-
+# Homework Stundent yuklashi
 class HomeworkSubmissionViewSet(viewsets.ViewSet):
-    # permission_classes = [AdminOrStudent]
+    permission_classes = [StudentPermission]
 
     def list(self, request):
         homework = HomeworkSubmission.objects.all()

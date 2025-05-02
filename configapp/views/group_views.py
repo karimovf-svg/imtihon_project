@@ -6,10 +6,11 @@ from rest_framework import status
 from ..models import *
 from ..serializers import *
 from django.shortcuts import get_object_or_404
+from ..add_permission import *
 
 # Group
 class GroupStudentCreateView(APIView):
-    # permission_classes = [IsAdminUser]
+    permission_classes = [StaffPermission]
 
     def get(self, request):
         groups = GroupStudent.objects.all()
@@ -25,7 +26,7 @@ class GroupStudentCreateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class GroupStudentDetailView(APIView):
-    # permission_classes = [IsAdminUser]
+    permission_classes = [TeacherPermission]
 
     def get_object(self, pk):
         return get_object_or_404(GroupStudent, pk=pk)
@@ -39,6 +40,7 @@ class GroupStudentDetailView(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    # Groupni Statudsini o'zgartirish
     @swagger_auto_schema(request_body=GroupStudentUpdateSerializer)
     def patch(self, request, pk):
         group = self.get_object(pk)
@@ -55,6 +57,7 @@ class GroupStudentDetailView(APIView):
         serializer = GroupStudentSerializer(group)
         return Response(serializer.data)
 
+
     def delete(self, request, pk):
         group = self.get_object(pk)
         group.delete()
@@ -63,6 +66,8 @@ class GroupStudentDetailView(APIView):
 
 # Teacher o'z groupini studentlarini ko'rishi
 class TeacherGetStudent(APIView):
+    permission_classes = [TeacherPermission]
+
     def get_object(self, pk):
         return get_object_or_404(GroupStudent, pk=pk)
 
@@ -73,9 +78,10 @@ class TeacherGetStudent(APIView):
 
 
 
+
 # Table
 class TableCreateView(APIView):
-    # permission_classes = [IsAdminUser]
+    permission_classes = [StaffPermission]
 
     def get(self, request):
         table = Table.objects.all()
@@ -91,7 +97,7 @@ class TableCreateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class TableDetailView(APIView):
-    # permission_classes = [IsAdminUser]
+    permission_classes = [StaffPermission]
 
     def get_object(self, pk):
         return get_object_or_404(Table, pk=pk)
@@ -119,7 +125,7 @@ class TableDetailView(APIView):
 
 # Table Type
 class TableTypeCreateView(APIView):
-    # permission_classes = [IsAdminUser]
+    permission_classes = [StaffPermission]
 
     def get(self, request):
         table_type = TableType.objects.all()
@@ -135,7 +141,7 @@ class TableTypeCreateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class TableTypeDetailView(APIView):
-    # permission_classes = [IsAdminUser]
+    permission_classes = [StaffPermission]
 
     def get_object(self, pk):
         return get_object_or_404(TableType, pk=pk)
@@ -162,7 +168,7 @@ class TableTypeDetailView(APIView):
 
 # Rooms
 class RoomsCreateView(APIView):
-    # permission_classes = [IsAdminUser]
+    permission_classes = [StaffPermission]
 
     def get(self, request):
         rooms = Rooms.objects.all()
@@ -178,7 +184,7 @@ class RoomsCreateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class RoomsDetailView(APIView):
-    # permission_classes = [IsAdminUser]
+    permission_classes = [StaffPermission]
 
     def get_object(self, pk):
         return get_object_or_404(Rooms, pk=pk)
