@@ -2,6 +2,7 @@ from django.core.validators import MaxValueValidator
 from django.db import models
 from ..models import BaseModel, Course, GroupStudent, Teacher, Student
 
+# Homework yaratish
 class Homework(BaseModel):
     title = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
@@ -16,6 +17,8 @@ class Homework(BaseModel):
         verbose_name = 'Homework'
         verbose_name_plural = 'Homeworks'
 
+
+# Homeworkni Student yuklashi
 class HomeworkSubmission(BaseModel):
     homework = models.ForeignKey(Homework, on_delete=models.CASCADE, related_name='submissions')
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='submissions')
@@ -29,6 +32,8 @@ class HomeworkSubmission(BaseModel):
         verbose_name = 'Homework Submission'
         verbose_name_plural = 'Homework Submissions'
 
+
+# Homeworkni Teacher Baholashi
 class HomeworkReview(BaseModel):
     submission = models.OneToOneField(HomeworkSubmission, on_delete=models.CASCADE, related_name='review')
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, related_name='reviews')

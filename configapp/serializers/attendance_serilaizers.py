@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models import Attendance, Status, Student
+from ..models import Attendance, Status, Student, GroupStudent, Lesson
 
 class StatusSerializer(serializers.ModelSerializer):
     class Meta:
@@ -13,10 +13,10 @@ class StatusSerializer(serializers.ModelSerializer):
         return None
 
 class AttendanceSerializer(serializers.ModelSerializer):
-    group = serializers.PrimaryKeyRelatedField(read_only=True)
-    student = serializers.PrimaryKeyRelatedField(read_only=True)
-    lesson = serializers.PrimaryKeyRelatedField(read_only=True)
-    is_status = serializers.StringRelatedField()  # yoki kerakli serializer
+    group = serializers.SlugRelatedField(queryset=GroupStudent.objects.all(), slug_field='title')
+    student = serializers.PrimaryKeyRelatedField(queryset=Student.objects.all())
+    lesson = serializers.SlugRelatedField(queryset=Lesson.objects.all(), slug_field='title')
+    is_status = serializers.SlugRelatedField(queryset=Status.objects.all(), slug_field='title')
 
     class Meta:
         model = Attendance
@@ -41,27 +41,10 @@ class AttendancePostSerializer(serializers.Serializer):
         return data
 
 
+class AttendanceUpdateSerializer(serializers.ModelSerializer):
+    is_status = serializers.PrimaryKeyRelatedField(queryset=Status.objects.all())
 
+    class Meta:
+        model = Attendance
+        fields = ['group', 'lesson', 'is_status']
 
-# from rest_framework import serializers
-# from ..models import Attendance, Status
-#
-# class StatusSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Status
-#         fields = '__all__'
-#
-# class AttendanceSerializer(serializers.ModelSerializer):
-#
-#     class Meta:
-#         model = Attendance
-#         fields = '__all__'
-#
-# class AttendancePostSerializer(serializers.Serializer):
-#     group = serializers.IntegerField()
-#     lesson = serializers.IntegerField()
-#     statuses = serializers.DictField(
-#         child=serializers.ListField(
-#             child=serializers.IntegerField()
-#         )
-#     )

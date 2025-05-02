@@ -151,14 +151,13 @@ class AttendanceDetailAPI(APIView):
     def get_object(self, pk):
         return get_object_or_404(Attendance, pk=pk)
 
-    @swagger_auto_schema(request_body=AttendanceSerializer)
+    @swagger_auto_schema(request_body=AttendanceUpdateSerializer)
     def put(self, request, pk):
-        # Davomatni yangilash
         attendance = self.get_object(pk)
-        serializer = AttendanceSerializer(attendance, data=request.data, partial=True)
+        serializer = AttendanceUpdateSerializer(attendance, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(AttendanceSerializer(attendance).data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
@@ -166,3 +165,12 @@ class AttendanceDetailAPI(APIView):
         attendance = self.get_object(pk)
         attendance.delete()
         return Response({'status': True, 'detail': 'Davomat muvaffaqiyatli o‘chirildi'}, status=status.HTTP_204_NO_CONTENT)
+
+
+# Student o'z davomatini ko'rish
+class StudentAttendanceAPIView(APIView):
+    def get(self, request, student_id):
+        student = get_object_or_404(Student, id=student_id)
+        attendances = Attendance.objects.filter(student=student)
+        serializer = AttendanceSerializer(attendances, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

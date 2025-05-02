@@ -22,6 +22,7 @@ urlpatterns = [
     path('attendance/create/', AttendanceCreateAPI.as_view(), name='attendance_create'),
     path('attendance/detail/<int:pk>/', AttendanceDetailAPI.as_view(), name='attendance_detail'),
 
+
     # Users
     path('users/create/', RegisterUserApi.as_view(), name='users_create'),
     path('users/detail/<int:pk>/', UserDetailView.as_view(), name='users_detail'),
@@ -48,6 +49,9 @@ urlpatterns = [
     path('course/rooms/detail/<int:pk>/', RoomsDetailView.as_view(), name='rooms_detail'),
     path('homeworks/', include(router.urls)),
 
+    # Statistics
+    path('statistic/attendance-student/<int:student_id>/', StudentAttendanceAPIView.as_view(), name='student_get_attendances'),
+    path('statistic/payments-student/<int:student_id>/', StudentPaymentAPIView.as_view(), name='student_get_payment'),
     path('statistic/students/', StudentFilterView.as_view(), name='statistic_students'),
     path('statistic/teachers/', TeacherFilterView.as_view(), name='teachers_statistic'),
     path('statistic/attendance/', AttendanceFilterView.as_view(), name='attendance_statistics'),

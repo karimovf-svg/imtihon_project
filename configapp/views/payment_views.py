@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from ..add_pagination import *
 from ..add_permission import *
-from ..models import Payment, Month, PaymentType
+from ..models import Payment, Month, PaymentType, Student
 from ..serializers import MonthSerializer, PaymentTypeSerializer, PaymentSerializer
 
 
@@ -119,3 +119,11 @@ class PaymentDetailView(APIView):
         payment = get_object_or_404(Payment, pk=pk)
         payment.delete()
         return Response({'status': True, 'detail': 'Payment o‘chirildi'}, status=status.HTTP_204_NO_CONTENT)
+
+# Student o'z to'lo'vlarini ko'rish
+class StudentPaymentAPIView(APIView):
+    def get(self, request, student_id):
+        student = get_object_or_404(Student, id=student_id)
+        payment = Payment.objects.filter(student=student)
+        serializer = PaymentSerializer(payment, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

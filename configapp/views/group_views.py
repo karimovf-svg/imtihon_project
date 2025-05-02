@@ -7,6 +7,7 @@ from ..models import *
 from ..serializers import *
 from django.shortcuts import get_object_or_404
 
+# Group
 class GroupStudentCreateView(APIView):
     # permission_classes = [IsAdminUser]
 
@@ -28,11 +29,6 @@ class GroupStudentDetailView(APIView):
 
     def get_object(self, pk):
         return get_object_or_404(GroupStudent, pk=pk)
-
-    def get(self, request, pk):
-        group = self.get_object(pk)
-        serializer = GroupStudentSerializer(group)
-        return Response(serializer.data)
 
     @swagger_auto_schema(request_body=GroupStudentSerializer)
     def put(self, request, pk):
@@ -65,6 +61,19 @@ class GroupStudentDetailView(APIView):
         return Response({"detail": "Deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
 
+# Teacher o'z groupini studentlarini ko'rishi
+class TeacherGetStudent(APIView):
+    def get_object(self, pk):
+        return get_object_or_404(GroupStudent, pk=pk)
+
+    def get(self, request, pk):
+        group = self.get_object(pk)
+        serializer = GroupStudentSerializer(group)
+        return Response(serializer.data)
+
+
+
+# Table
 class TableCreateView(APIView):
     # permission_classes = [IsAdminUser]
 
@@ -107,6 +116,8 @@ class TableDetailView(APIView):
         return Response({"detail": "Deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
 
+
+# Table Type
 class TableTypeCreateView(APIView):
     # permission_classes = [IsAdminUser]
 
@@ -148,6 +159,8 @@ class TableTypeDetailView(APIView):
         table_type.delete()
         return Response({"detail": "Deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
+
+# Rooms
 class RoomsCreateView(APIView):
     # permission_classes = [IsAdminUser]
 
