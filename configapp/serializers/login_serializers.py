@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.hashers import make_password
+from django.contrib.auth.backends import ModelBackend
 from rest_framework import serializers
 from ..models import *
 
@@ -40,6 +41,27 @@ class AdminUserSerializer(serializers.ModelSerializer):
         validated_data.update({
             'is_active': True,
             'is_admin': True,
+        })
+        # User yaratish
+        user = User.objects.create(**validated_data)
+        return user
+
+
+class StaffUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['phone_number', 'password']
+        extra_kwargs = {
+            'password': {
+                'write_only': True,
+                'style': {'input_type': 'password'}  # Swaggerda password input ko'rinishi
+            }
+        }
+    def create(self, validated_data):
+        validated_data['password'] = make_password(validated_data['password'])
+
+        validated_data.update({
+            'is_active': True,
             'is_staff': True,
         })
         # User yaratish
@@ -66,6 +88,7 @@ class VerifySMSSerializer(serializers.Serializer):
 
 class SMSSerializer(serializers.Serializer):
     phone_number = serializers.CharField()
+
 
 class LoginSerializer(serializers.Serializer):
     phone_number = serializers.CharField()  # username o'rniga phone

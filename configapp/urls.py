@@ -27,6 +27,7 @@ urlpatterns = [
     path('users/create/', RegisterUserApi.as_view(), name='users_create'),
     path('users/detail/<int:pk>/', UserDetailView.as_view(), name='users_detail'),
     path('users/admin-create/', CreateAdminUserView.as_view(), name='admin_create'),
+    path('users/staff-create/', CreateStaffUserView.as_view(), name='staff_create'),
     path('users/department/create/', DepartmentCreateView.as_view(), name='department_create'),
     path('users/department/<int:pk>/', DepartmentDetailView.as_view(), name='department_detail'),
     path('users/teacher/create/', TeacherCreateApi.as_view(), name='teacher_create'),

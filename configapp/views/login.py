@@ -110,6 +110,19 @@ class CreateAdminUserView(APIView):
             return Response({"message": "Admin successfully created"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+# Create User Staff
+class CreateStaffUserView(APIView):
+    permission_classes = [AdminPermission]
+
+    @swagger_auto_schema(request_body=StaffUserSerializer)
+    def post(self, request):
+        serializer = StaffUserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Staff successfully created"}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 # USER Update and Delete
 class UserDetailView(APIView):
     permission_classes = [AdminPermission]
