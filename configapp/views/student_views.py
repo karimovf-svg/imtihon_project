@@ -17,9 +17,9 @@ class StudentCreateApi(APIView):
         data = {'success': True}
         student = Student.objects.all()
         paginator = CustomPagination()
-        paginator.page_size = 2 # Sahifadagi obyektlar soni
+        paginator.page_size = 10 # Sahifadagi obyektlar soni
         result_page = paginator.paginate_queryset(student, request)
-        serializer = StudentSerializer(student, many=True)
+        serializer = StudentSerializer(result_page, many=True)
         data['student'] = serializer.data
         return paginator.get_paginated_response(data=data)
 

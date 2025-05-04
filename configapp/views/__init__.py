@@ -6,3 +6,4 @@ from .attendance_views import *
 from .statistic_views import *
 from .homework_views import *
 from .payment_views import *
+from .lesson_views import *

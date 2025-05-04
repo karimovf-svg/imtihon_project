@@ -42,6 +42,7 @@ urlpatterns = [
     path('course/detail/<int:pk>/', CourseDetailView.as_view(), name='course_detail'),
     path('course/group-students/create/', GroupStudentCreateView.as_view(), name='group_create'),
     path('course/group-students/detail/<int:pk>/', GroupStudentDetailView.as_view(), name='group_detail'),
+    path('course/teacher_get_student/<int:pk>/', TeacherUpdateView.as_view(), name='teacher_get_student'),
     path('course/table/create/', TableCreateView.as_view(), name='table_create'),
     path('course/table/detail/<int:pk>/', TableDetailView.as_view(), name='table_detail'),
     path('course/table-type/create/', TableTypeCreateView.as_view(), name='table_type_create'),
@@ -50,6 +51,10 @@ urlpatterns = [
     path('course/rooms/detail/<int:pk>/', RoomsDetailView.as_view(), name='rooms_detail'),
     path('homeworks/', include(router.urls)),
     # path('course/teacher-group-title/update/<int:pk>/', TeacherUpdateGrouptitle.as_view(), name='group_title_update'),
+
+    # Lesson
+    path('lesson/create/', LessonCreateView.as_view(), name='lesson_create'),
+    path('lesson/detail/<int:pk>/', LessonDetailView.as_view(), name='lesson_detail'),
 
     # Statistics
     path('statistic/attendance-student/<int:student_id>/', StudentAttendanceAPIView.as_view(), name='student_get_attendances'),
