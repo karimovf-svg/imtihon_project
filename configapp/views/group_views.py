@@ -64,6 +64,21 @@ class GroupStudentDetailView(APIView):
         return Response({"detail": "Deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
 
+# Teacher o'z grouplarini ko'rishi
+class TeacherGetGroup(APIView):
+    permission_classes = [TeacherPermission]
+
+    def get(self, request, pk=None):
+        user = request.user
+
+        if user.is_teacher:
+            # Barcha o'ziga biriktirilgan guruhlar ro'yxati
+            teacher = get_object_or_404(Teacher, user=user)
+            groups = GroupStudent.objects.filter(teacher=teacher)
+            serializer = GroupStudentSerializer(groups, many=True)
+            return Response(serializer.data)
+
+
 # Teacher o'z groupini studentlarini ko'rishi
 class TeacherGetStudent(APIView):
     permission_classes = [TeacherPermission]
