@@ -4,6 +4,7 @@ from django.utils.timezone import make_aware
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from ..models import *
@@ -143,3 +144,25 @@ class PaymentFilterView(APIView):
             )
         )
         return Response(payment_stats, status=status.HTTP_200_OK)
+
+
+# Student o'z davomatini ko'rish
+class StudentAttendanceAPIView(APIView):
+    permission_classes = [StudentPermission]
+
+    def get(self, request, student_id):
+        student = get_object_or_404(Student, id=student_id)
+        attendances = Attendance.objects.filter(student=student)
+        serializer = AttendanceSerializer(attendances, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+# Student o'z to'lo'vlarini ko'rish
+class StudentPaymentAPIView(APIView):
+    permission_classes = [StudentPermission]
+
+    def get(self, request, student_id):
+        student = get_object_or_404(Student, id=student_id)
+        payment = Payment.objects.filter(student=student)
+        serializer = PaymentSerializer(payment, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

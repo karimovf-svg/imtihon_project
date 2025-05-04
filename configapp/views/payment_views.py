@@ -123,12 +123,4 @@ class PaymentDetailView(APIView):
 
 
 
-# Student o'z to'lo'vlarini ko'rish
-class StudentPaymentAPIView(APIView):
-    permission_classes = [StudentPermission]
 
-    def get(self, request, student_id):
-        student = get_object_or_404(Student, id=student_id)
-        payment = Payment.objects.filter(student=student)
-        serializer = PaymentSerializer(payment, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)

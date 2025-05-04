@@ -169,12 +169,3 @@ class AttendanceDetailAPI(APIView):
         return Response({'status': True, 'detail': 'Davomat muvaffaqiyatli o‘chirildi'}, status=status.HTTP_204_NO_CONTENT)
 
 
-# Student o'z davomatini ko'rish
-class StudentAttendanceAPIView(APIView):
-    permission_classes = [StudentPermission]
-
-    def get(self, request, student_id):
-        student = get_object_or_404(Student, id=student_id)
-        attendances = Attendance.objects.filter(student=student)
-        serializer = AttendanceSerializer(attendances, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
