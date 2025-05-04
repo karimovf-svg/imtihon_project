@@ -14,7 +14,7 @@ class PaymentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Payment
-        fields = ['id', 'student', 'group', 'month', 'payment_type','created_ed', 'updated_ed']
+        fields = ['id', 'student', 'group', 'month', 'payment_type','created_ed', 'updated_ed', 'price']
 
 
 class PaymentTypeSerializer(serializers.ModelSerializer):
