@@ -51,7 +51,7 @@ urlpatterns = [
     path('course/rooms/create/', RoomsCreateView.as_view(), name='rooms_create'),
     path('course/rooms/detail/<int:pk>/', RoomsDetailView.as_view(), name='rooms_detail'),
     path('homeworks/', include(router.urls)),
-    # path('course/teacher-group-title/update/<int:pk>/', TeacherUpdateGrouptitle.as_view(), name='group_title_update'),
+    path('course/teacher-group-title/update/<int:pk>/', TeacherUpdateGrouptitle.as_view(), name='group_title_update'),
 
     # Lesson
     path('lesson/create/', LessonCreateView.as_view(), name='lesson_create'),
