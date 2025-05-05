@@ -95,27 +95,15 @@ class AttendanceFilterView(APIView):
         start_date = make_aware(datetime.combine(start_date, datetime.min.time()))
         end_date = make_aware(datetime.combine(end_date, datetime.max.time()))
 
-        # Status IDlarini olish
-        try:
-            came_status = Status.objects.get(title__iexact='keldi')
-            absent_status = Status.objects.get(title__iexact='kelmadi')
-            late_status = Status.objects.get(title__iexact='kechikdi')
-            excused_status = Status.objects.get(title__iexact='sababli')
-        except Status.DoesNotExist as e:
-            return Response(
-                {"error": f"Status topilmadi: {str(e)}"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        attendance_stats = (
-            Attendance.objects.filter(created_ed__range=[start_date.date(), end_date.date()])
-            .aggregate(
-                total_present=Count("id", filter=Q(is_status=came_status)),
-                total_absent=Count("id", filter=Q(is_status=absent_status)),
-                total_late=Count("id", filter=Q(is_status=late_status)),
-                total_excused=Count("id", filter=Q(is_status=excused_status)),
-            )
+        attendance_stats = Attendance.objects.filter(
+            created_ed__range=[start_date.date(), end_date.date()]
+        ).aggregate(
+            total_present=Count("id", filter=Q(is_status=Attendance.StatusChoices.KELDI)),
+            total_absent=Count("id", filter=Q(is_status=Attendance.StatusChoices.KELMADI)),
+            total_late=Count("id", filter=Q(is_status=Attendance.StatusChoices.KECHIKDI)),
+            total_excused=Count("id", filter=Q(is_status=Attendance.StatusChoices.SABABLI)),
         )
+
         return Response(attendance_stats, status=status.HTTP_200_OK)
 
 
@@ -150,19 +138,25 @@ class PaymentFilterView(APIView):
 class StudentAttendanceAPIView(APIView):
     permission_classes = [StudentPermission]
 
-    def get(self, request, student_id):
-        student = get_object_or_404(Student, id=student_id)
-        attendances = Attendance.objects.filter(student=student)
-        serializer = AttendanceSerializer(attendances, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    def get(self, request, pk=None):
+        user = request.user
+
+        if user.is_student:
+            student = get_object_or_404(Student, user=user)
+            attendances = Attendance.objects.filter(student=student)
+            serializer = AttendanceSerializer(attendances, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 # Student o'z to'lo'vlarini ko'rish
 class StudentPaymentAPIView(APIView):
     permission_classes = [StudentPermission]
 
-    def get(self, request, student_id):
-        student = get_object_or_404(Student, id=student_id)
-        payment = Payment.objects.filter(student=student)
-        serializer = PaymentSerializer(payment, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    def get(self, request, pk=None):
+        user = request.user
+
+        if user.is_student:
+            student = get_object_or_404(Student, user=user)
+            payment = Payment.objects.filter(student=student)
+            serializer = PaymentSerializer(payment, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)

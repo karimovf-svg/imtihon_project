@@ -17,9 +17,8 @@ urlpatterns = [
     path('auth/new-password/', ChangePasswordView.as_view(), name='password_update'),
 
     # Attendance
-    path('attendance/status-create/', StatusCreateAPI.as_view(), name='status_create'),
-    path('attendance/status-detail/<int:pk>/', StatusDetailAPI.as_view(), name='status-detail'),
     path('attendance/create/', AttendanceCreateAPI.as_view(), name='attendance_create'),
+    path('attendance/detail/', AttendanceUpdateAPI.as_view(), name='attendance_update'),
     path('attendance/detail/<int:pk>/', AttendanceDetailAPI.as_view(), name='attendance_detail'),
 
 
@@ -58,7 +57,7 @@ urlpatterns = [
     path('lesson/detail/<int:pk>/', LessonDetailView.as_view(), name='lesson_detail'),
 
     # Statistics
-    path('statistic/attendance-student/<int:student_id>/', StudentAttendanceAPIView.as_view(), name='student_get_attendances'),
+    path('statistic/attendance-student/', StudentAttendanceAPIView.as_view(), name='student_get_attendances'),
     path('statistic/payments-student/<int:student_id>/', StudentPaymentAPIView.as_view(), name='student_get_payment'),
     path('statistic/students/', StudentFilterView.as_view(), name='statistic_students'),
     path('statistic/teachers/', TeacherFilterView.as_view(), name='teachers_statistic'),

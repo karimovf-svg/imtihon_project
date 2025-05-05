@@ -10,47 +10,6 @@ from ..add_pagination import *
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-# Status
-class StatusCreateAPI(APIView):
-    permission_classes = [StaffPermission]
-
-    def get(self, request):
-        status = Status.objects.all()
-        paginator = CustomPagination()
-        result_page = paginator.paginate_queryset(status, request)
-        serializer = StatusSerializer(result_page, many=True)
-        return paginator.get_paginated_response(serializer.data)
-
-    @swagger_auto_schema(request_body=StatusSerializer)
-    def post(self, request):
-        serializer = StatusSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class StatusDetailAPI(APIView):
-    permission_classes = [StaffPermission]
-
-    def get_object(self, pk):
-        return get_object_or_404(Status, pk=pk)
-
-    @swagger_auto_schema(request_body=StatusSerializer)
-    def put(self, request, pk):
-        status_obj = self.get_object(pk)
-        serializer = StatusSerializer(status_obj, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, pk):
-        status_obj = self.get_object(pk)
-        status_obj.delete()
-        return Response({'status': True, 'detail': 'Status muaffaqiyatli uchirildi'}, status=status.HTTP_204_NO_CONTENT)
-
-
 # Attendance
 class AttendanceCreateAPI(APIView):
     permission_classes = [TeacherPermission]
@@ -62,8 +21,7 @@ class AttendanceCreateAPI(APIView):
         serializer = AttendanceSerializer(result_page, many=True)
         return paginator.get_paginated_response(serializer.data)
 
-    @swagger_auto_schema(
-        request_body=openapi.Schema(
+    @swagger_auto_schema(request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
             properties={
                 'group': openapi.Schema(type=openapi.TYPE_INTEGER, description='Guruh ID'),
@@ -91,6 +49,7 @@ class AttendanceCreateAPI(APIView):
             400: "Noto'g'ri ma'lumotlar"
         }
     )
+
     def post(self, request):
         serializer = AttendancePostSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -100,24 +59,20 @@ class AttendanceCreateAPI(APIView):
         lesson_id = data['lesson']
         statuses = data.get('statuses', {})
 
-        # Status obyektlarini olish
-        try:
-            came_status = Status.objects.get(title__iexact='keldi')
-            excused_status = Status.objects.get(title__iexact='sababli')
-            absent_status = Status.objects.get(title__iexact='kelmadi')
-        except Status.DoesNotExist as e:
-            return Response(
-                {"error": f"Kerakli status topilmadi: {str(e)}"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        # Statuslarni model enum'idan olish
+        came_status = Attendance.StatusChoices.KELDI
+        excused_status = Attendance.StatusChoices.SABABLI
+        absent_status = Attendance.StatusChoices.KELMADI
 
-        # Guruhdagi barcha talabalar
         students = Student.objects.filter(group__id=group_id)
         marked_students = set()
 
-        # Keldi va sababli studentlarga status belgilash
         for status_title, student_ids in statuses.items():
-            status_obj = came_status if status_title.lower() == 'keldi' else excused_status
+            status_obj = None
+            if status_title.lower() == 'keldi':
+                status_obj = came_status
+            elif status_title.lower() == 'sababli':
+                status_obj = excused_status
 
             for student_id in student_ids:
                 marked_students.add(student_id)
@@ -128,7 +83,6 @@ class AttendanceCreateAPI(APIView):
                     defaults={'is_status': status_obj}
                 )
 
-        # Qolganlarga 'kelmadi' belgilash
         for student in students:
             if student.id not in marked_students:
                 Attendance.objects.update_or_create(
@@ -147,25 +101,45 @@ class AttendanceCreateAPI(APIView):
         )
 
 
-class AttendanceDetailAPI(APIView):
+class AttendanceUpdateAPI(APIView):
     permission_classes = [TeacherPermission]
 
-    def get_object(self, pk):
-        return get_object_or_404(Attendance, pk=pk)
+    def get_object(self, student_id, lesson_id, group_id):
+        return get_object_or_404(
+            Attendance,
+            student_id=student_id,
+            lesson_id=lesson_id,
+            group_id=group_id
+        )
 
     @swagger_auto_schema(request_body=AttendanceUpdateSerializer)
-    def put(self, request, pk):
-        attendance = self.get_object(pk)
+    def put(self, request):
+        student_id = request.data.get('student')
+        lesson_id = request.data.get('lesson')
+        group_id = request.data.get('group')
+
+        if not all([student_id, lesson_id, group_id]):
+            return Response({'error': 'student, lesson va group maydonlari talab qilinadi.'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        attendance = self.get_object(student_id, lesson_id, group_id)
         serializer = AttendanceUpdateSerializer(attendance, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(AttendanceSerializer(attendance).data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+class AttendanceDetailAPI(APIView):
+    permission_classes = [TeacherPermission]
+
+    def get_object(self, pk):
+        return get_object_or_404(Attendance, pk=pk)
+
     def delete(self, request, pk):
-        # Davomat yozuvini o‘chirish
-        attendance = self.get_object(pk)
+        attendance = get_object_or_404(Attendance, pk=pk)
         attendance.delete()
         return Response({'status': True, 'detail': 'Davomat muvaffaqiyatli o‘chirildi'}, status=status.HTTP_204_NO_CONTENT)
+
 
 
